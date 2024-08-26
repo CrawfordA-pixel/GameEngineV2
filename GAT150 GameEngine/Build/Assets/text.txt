@@ -1,0 +1,7 @@
+{
+   "name":"Crawford",
+   "age":34,
+   "isAwake":true,
+   "braincell":false,
+   "position": [5,10]
+}

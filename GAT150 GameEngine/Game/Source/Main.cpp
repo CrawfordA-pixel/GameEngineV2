@@ -1,28 +1,45 @@
 #include "Engine.h"
 #include <iostream>
-#include <cstdlib>
 #include <vector>
+#include <cstdlib>
 
-int main(int argc, char* argv[])
+int main(int argc, char* argv[]) 
 {
-	bool quit = false;
-	//initialize engine
-	g_engine.Initialize();
-	
-	while (!quit) {
-		//input
 
-		//update
-		g_engine.Update();
+	//create engine
+	std::unique_ptr<Engine> engine = std::make_unique<Engine>();
+	engine->Initialize();
 
-		//create frame
-		g_engine.GetRenderer().SetColor(random(255), random(255), random(255), 0);
-		g_engine.GetRenderer().BeginFrame();
-		
-		//draw frame
-		g_engine.GetRenderer().EndFrame();
+	//std::unique_ptr<MyGame> game = std::make_unique<MyGame>();
+	//game->Initialize();
 
+	//create scene
+
+	//load assets
+	File::SetFilePath("Assets");
+	std::cout << File::GetFilePath() << std::endl;
+	res_t<Texture> texture = ResourceManager::Instance().Get<Texture>("sillycat.png", engine->GetRenderer());
+	res_t<Font> font = ResourceManager::Instance().Get<Font>("Aadhunik.ttf", 12);
+
+	//creating text
+	std::unique_ptr<Text> text = std::make_unique<Text>(font);
+	text->Create(engine->GetRenderer(), "WHAAAAAAAAAAA!", { 1,1,0,1 });
+
+	//creating texture component
+	std::unique_ptr<TextureComponent> textureComponent = std::make_unique<TextureComponent>();
+	textureComponent->texture = texture;
+
+	while (!engine->IsQuit()) {
+		engine->Update();
+
+		engine->GetRenderer().BeginFrame();
+
+		engine->GetRenderer().DrawTexture(texture.get(), 200, 100, 0);
+		text->Draw(engine->GetRenderer(), 200, 200);
+
+		engine->GetRenderer().EndFrame();
 	}
-	g_engine.Shutdown();
+	ResourceManager::Instance().Clear();
+	engine->Shutdown();
 	return 0;
 }
